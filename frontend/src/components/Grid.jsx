@@ -4,9 +4,9 @@ import ProductGrid from "./ProductGrid";
 function Grid({ products }) {
   return (
     <>
-      <div className="mt-8 p-7">
+      <div className="md:mt-8 p-7 grid sm:grid-cols-2 md:grid-cols-4 gap-4">
         {products.map((product) => (
-          <ProductGrid product={product} key={product.id} />
+          <ProductGrid key={product._id} product={product} />
         ))}
       </div>
     </>

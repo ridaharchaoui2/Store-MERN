@@ -1,12 +1,18 @@
 import { useState } from "react";
 import { User, ShoppingBag, Menu, X } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+
+  const { cartItems } = useSelector((state) => state.cart);
+
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
+
+  const cartCount = cartItems.reduce((acc, item) => acc + Number(item.qty), 0);
   return (
     <>
       <nav className="sticky top-0 bg-black text-white px-5 md:px-10 py-3 flex justify-between items-center font-sans z-50">
@@ -57,7 +63,14 @@ export default function Navbar() {
           <User className="w-6 h-6 cursor-pointer hover:text-gray-400 transition-colors" />
 
           {/* Cart */}
-          <ShoppingBag className="w-6 h-6 cursor-pointer hover:text-gray-400 transition-colors" />
+          <Link to="/cart" className="relative p-2 group">
+            <ShoppingBag className="w-6 h-6 group-hover:text-orange-400 transition-colors" />
+            {cartCount > 0 && (
+              <span className="absolute top-0 right-0 bg-orange-500 text-black text-[10px] font-bold h-5 w-5 rounded-full flex items-center justify-center border-2 border-black">
+                {cartCount}
+              </span>
+            )}
+          </Link>
 
           {/* Menu icon - visible on small screens, hidden on larger screens */}
           <button onClick={toggleMenu} className="md:hidden">

@@ -8,6 +8,10 @@ import Home from "./screens/Home.jsx";
 import Login from "./screens/Login.jsx";
 import Store from "./screens/store.jsx";
 import NotFound from "./screens/NotFound.jsx";
+import { Provider } from "react-redux";
+import store from "./store.js";
+import Product from "./screens/Product.jsx";
+import Cart from "./screens/Cart.jsx";
 
 const router = createBrowserRouter([
   {
@@ -31,11 +35,21 @@ const router = createBrowserRouter([
         path: "/login",
         element: <Login />,
       },
+      {
+        path: "/product/:id",
+        element: <Product />,
+      },
+      {
+        path: "/cart",
+        element: <Cart />,
+      },
     ],
   },
 ]);
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <Provider store={store}>
+      <RouterProvider router={router} />
+    </Provider>
   </StrictMode>,
 );
