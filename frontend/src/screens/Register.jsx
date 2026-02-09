@@ -1,13 +1,12 @@
-import React from "react";
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useRegisterMutation } from "../slices/userApiSlice";
 import { setCredentials } from "../slices/authSlice";
-import { useLoginMutation } from "../slices/userApiSlice";
 import { Link } from "react-router-dom";
-import { useEffect } from "react";
 
-function Login() {
+const Register = () => {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
@@ -16,41 +15,61 @@ function Login() {
   const searchParams = new URLSearchParams(search);
   const redirect = searchParams.get("redirect") || "/";
 
-  const [login, { isLoading }] = useLoginMutation();
-  const userInfo = useSelector((state) => state.auth.userInfo);
+  const [register, { isLoading }] = useRegisterMutation();
+  const { userInfo } = useSelector((state) => state.auth);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await login({ email, password }).unwrap();
+      const res = await register({ name, email, password }).unwrap();
       dispatch(setCredentials({ ...res }));
-      navigate(redirect);
     } catch (error) {
-      console.error(error);
+      console.error(error?.data?.message || error.message);
     }
   };
+
   useEffect(() => {
     if (userInfo) {
       navigate(redirect);
     }
-  }, [navigate, userInfo, redirect]);
+  }, [userInfo, navigate, redirect]);
+
   return (
-    <div className="min-h-200 bg-black flex items-center justify-center p-6 antialiased relative overflow-hidden">
+    <div className="min-h-screen bg-black flex items-center justify-center p-6 antialiased relative overflow-hidden">
       {/* Background Decorative Glow */}
-      <div className="absolute top-1/4 -left-20 w-96 h-96 bg-orange-500/10 blur-[120px] rounded-full"></div>
-      <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-orange-500/10 blur-[120px] rounded-full"></div>
+      <div className="absolute top-1/4 -right-20 w-96 h-96 bg-orange-500/10 blur-[120px] rounded-full"></div>
+      <div className="absolute bottom-1/4 -left-20 w-96 h-96 bg-orange-500/10 blur-[120px] rounded-full"></div>
 
       <div className="w-full max-w-md z-10">
-        <div className="bg-[#615f5f] border border-zinc-800 p-10 shadow-2xl relative">
+        <div className="bg-[#0A0A0A] border border-zinc-800 p-10 shadow-2xl relative">
           {/* Header */}
           <div className="mb-10 text-center">
             <h1 className="text-4xl font-black uppercase tracking-tighter text-white">
-              Welcome <span className="text-orange-500 italic">Back</span>
+              Create <span className="text-orange-500 italic">Account</span>
             </h1>
             <div className="h-1 w-12 bg-orange-500 mx-auto mt-3"></div>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-8">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Name Field */}
+            <div className="flex flex-col">
+              <label
+                htmlFor="name"
+                className="text-[10px] uppercase tracking-[0.3em] font-bold text-zinc-500 mb-2"
+              >
+                Full Name
+              </label>
+              <input
+                type="text"
+                id="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="John Doe"
+                className="bg-zinc-900/50 border border-zinc-800 p-4 text-white focus:outline-none focus:border-orange-500 transition-all duration-300 text-sm"
+                required
+              />
+            </div>
+
             {/* Email Field */}
             <div className="flex flex-col">
               <label
@@ -76,7 +95,7 @@ function Login() {
                 htmlFor="password"
                 className="text-[10px] uppercase tracking-[0.3em] font-bold text-zinc-500 mb-2"
               >
-                Security Password
+                Create Password
               </label>
               <input
                 type="password"
@@ -92,9 +111,9 @@ function Login() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full py-4 bg-white text-black text-xs font-black uppercase tracking-[0.2em] hover:bg-orange-500 hover:text-white transition-all duration-300 shadow-lg active:scale-95 disabled:opacity-50"
+              className="w-full py-4 bg-white text-black text-xs font-black uppercase tracking-[0.2em] hover:bg-orange-500 hover:text-white transition-all duration-300 shadow-lg active:scale-95 disabled:opacity-50 mt-4"
             >
-              {isLoading ? "Authenticating..." : "Sign In"}
+              {isLoading ? "Creating Account..." : "Register"}
             </button>
           </form>
 
@@ -105,18 +124,18 @@ function Login() {
             </div>
             <div className="relative flex justify-center text-[10px] uppercase tracking-widest">
               <span className="bg-[#0A0A0A] px-4 text-zinc-600">
-                New to Evanox?
+                Already a member?
               </span>
             </div>
           </div>
 
-          {/* New Customer Section */}
+          {/* Login Section */}
           <div className="text-center">
             <Link
-              to={redirect ? `/register?redirect=${redirect}` : "/register"}
+              to={redirect ? `/login?redirect=${redirect}` : "/login"}
               className="group flex items-center justify-center gap-2 text-[11px] font-black uppercase tracking-[0.2em] text-white hover:text-orange-500 transition-colors duration-300"
             >
-              Create Account
+              Login to Evanox
               <span className="group-hover:translate-x-1 transition-transform duration-300">
                 →
               </span>
@@ -126,11 +145,11 @@ function Login() {
 
         {/* Footer Note */}
         <p className="mt-8 text-center text-zinc-600 text-[9px] uppercase tracking-[0.2em]">
-          Secure Access • Evanox Boutique Store
+          Join the Collection • Evanox Boutique
         </p>
       </div>
     </div>
   );
-}
+};
 
-export default Login;
+export default Register;

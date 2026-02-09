@@ -1,9 +1,11 @@
 import express from "express";
-import productsFace from "./data/data.js";
 import dotenv from "dotenv";
 import connectDB from "./config/db.js";
 import productRouter from "./routes/productRoutes.js";
+import userRouter from "./routes/userRoutes.js";
+import orderRouter from "./routes/orderRoutes.js";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 
 //Middlewares import
 import { notFound, errorHandler } from "./middlewares/errorHandler.js";
@@ -15,7 +17,9 @@ const port = process.env.PORT || 5000;
 const app = express();
 
 // 1. GLOBAL MIDDLEWARE
-
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 // CORS Logic
 app.use(
   cors({
@@ -26,6 +30,12 @@ app.use(
 );
 // 2. API ROUTES
 app.use("/api/products", productRouter);
+app.use("/api/users", userRouter);
+app.use("/api/orders", orderRouter);
+
+app.get("/api/config/paypal", (req, res) => {
+  res.send({ clientId: process.env.PAYPAL_ID });
+});
 
 // 4. ERROR HANDLING (Must be after all routes)
 app.use(notFound);

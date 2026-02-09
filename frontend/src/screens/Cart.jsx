@@ -21,6 +21,7 @@ export default function CartScreen() {
   const dispatch = useDispatch();
 
   const { cartItems } = useSelector((state) => state.cart);
+  const { userInfo } = useSelector((state) => state.auth);
 
   const addToCartHandler = (product, qty) => {
     dispatch(addToCart({ ...product, qty }));
@@ -37,6 +38,14 @@ export default function CartScreen() {
   const shippingThreshold = 100; // Example threshold
   const remainingForFreeShipping = Math.max(0, shippingThreshold - itemsPrice);
   const progressPercent = Math.min(100, (itemsPrice / shippingThreshold) * 100);
+
+  const checkoutHandler = () => {
+    if (userInfo) {
+      navigate("/shipping");
+    } else {
+      navigate("/login?redirect=/shipping");
+    }
+  };
 
   return (
     <div className="min-h-screen bg-black text-gray-100 font-sans selection:bg-blue-600 selection:text-white">
@@ -207,7 +216,10 @@ export default function CartScreen() {
               </div>
 
               {/* Checkout Button */}
-              <button className="w-full bg-blue-600 hover:bg-blue-500 text-white text-xl font-bold py-5 rounded-xl transition-all transform hover:scale-[1.01] active:scale-[0.99] shadow-lg shadow-blue-900/20">
+              <button
+                onClick={checkoutHandler}
+                className="w-full bg-blue-600 hover:bg-blue-500 text-white text-xl font-bold py-5 rounded-xl transition-all transform hover:scale-[1.01] active:scale-[0.99] shadow-lg shadow-blue-900/20"
+              >
                 Check out
               </button>
             </div>
