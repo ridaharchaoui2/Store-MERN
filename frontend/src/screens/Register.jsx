@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useRegisterMutation } from "../slices/userApiSlice";
 import { setCredentials } from "../slices/authSlice";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const Register = () => {
   const [name, setName] = useState("");
@@ -23,8 +24,11 @@ const Register = () => {
     try {
       const res = await register({ name, email, password }).unwrap();
       dispatch(setCredentials({ ...res }));
+      toast.success("Registration successful!");
     } catch (error) {
-      console.error(error?.data?.message || error.message);
+      toast.error(
+        error?.data?.message || "Registration failed. Please try again.",
+      );
     }
   };
 

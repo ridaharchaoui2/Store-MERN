@@ -8,20 +8,39 @@ import {
   Clock,
 } from "lucide-react";
 import Rating from "./../components/Rating";
-import { useGetProductDetailsQuery } from "../slices/productSlice";
+import {
+  useCreateReviewMutation,
+  useGetProductDetailsQuery,
+} from "../slices/productSlice";
 import { useNavigate, useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "../slices/cartSlice";
+import { toast } from "react-toastify";
 
 function Product() {
   const { id } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { data: product, isLoading, error } = useGetProductDetailsQuery(id);
+  // Queries & Mutations
+  const {
+    data: product,
+    isLoading,
+    refetch,
+    error,
+  } = useGetProductDetailsQuery(id);
+  const [createReview, { isLoading: reviewIsLoading }] =
+    useCreateReviewMutation();
 
+  // Component State
   const [currentImage, setCurrentImage] = useState(null);
+  const [isLightboxOpen, setIsLightBoxOpen] = useState(false);
+  const [lightboxImageIndex, setLightboxImageIndex] = useState(0);
   const [qty, setQty] = useState(1);
+  const [rating, setRating] = useState(5);
+  const [comment, setComment] = useState("");
+
+  const { userInfo } = useSelector((state) => state.auth);
 
   // Sync current image when product loads
   useEffect(() => {
@@ -38,6 +57,25 @@ function Product() {
       }),
     );
     navigate("/cart");
+  };
+
+  const reviewHandlerSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await createReview({ productId: id, rating, comment }).unwrap();
+      refetch();
+      setRating(5);
+      setComment("");
+      toast.success("REVIEW_LOGGED_SUCCESSFULLY");
+    } catch (err) {
+      toast.error(err?.data?.message || "SUBMISSION_FAILED");
+    }
+  };
+
+  const openLightBox = (imgSrc) => {
+    const index = product.images.indexOf(imgSrc);
+    setLightboxImageIndex(index !== -1 ? index : 0);
+    setIsLightBoxOpen(true);
   };
 
   if (isLoading)
@@ -290,7 +328,7 @@ function Product() {
             </div>
 
             {/* Review Form */}
-            {/* <div className="lg:col-span-5">
+            <div className="lg:col-span-5">
               {userInfo ? (
                 <div className="bg-zinc-900/50 p-10 border border-zinc-800 space-y-8">
                   <h3 className="text-3xl font-black uppercase tracking-tighter">
@@ -343,7 +381,7 @@ function Product() {
                   </Link>
                 </div>
               )}
-            </div> */}
+            </div>
           </div>
         </div>
       </div>

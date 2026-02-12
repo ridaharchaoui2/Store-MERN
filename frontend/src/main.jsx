@@ -20,6 +20,15 @@ import Payment from "./screens/Payment.jsx";
 import PlaceOrder from "./screens/PlaceOrder.jsx";
 import DetailsOrder from "./screens/DetailsOrder.jsx";
 import { PayPalScriptProvider } from "@paypal/react-paypal-js";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Services from "./screens/Services.jsx";
+import AdminPrivateRoutes from "./components/AdminPrivateRoutes.jsx";
+import OrderListAdmin from "./screens/admin/OrderListAdmin.jsx";
+import ProductListAdmin from "./screens/admin/ProductListAdmin.jsx";
+import EditProductAdmin from "./screens/admin/EditProductAdmin.jsx";
+import EditUserAdmin from "./screens/admin/EditUserAdmin.jsx";
+import UsersListAdmin from "./screens/admin/UsersListAdmin.jsx";
 
 const router = createBrowserRouter([
   {
@@ -55,6 +64,10 @@ const router = createBrowserRouter([
         path: "/cart",
         element: <Cart />,
       },
+      {
+        path: "/services",
+        element: <Services />,
+      },
 
       {
         path: "",
@@ -82,6 +95,32 @@ const router = createBrowserRouter([
           },
         ],
       },
+      {
+        path: "",
+        element: <AdminPrivateRoutes />,
+        children: [
+          {
+            path: "admin/orderlistadmin",
+            element: <OrderListAdmin />,
+          },
+          {
+            path: "admin/productlistadmin",
+            element: <ProductListAdmin />,
+          },
+          {
+            path: "admin/product/:id/edit",
+            element: <EditProductAdmin />,
+          },
+          {
+            path: "admin/user/:id/edit",
+            element: <EditUserAdmin />,
+          },
+          {
+            path: "admin/users",
+            element: <UsersListAdmin />,
+          },
+        ],
+      },
     ],
   },
 ]);
@@ -89,6 +128,7 @@ createRoot(document.getElementById("root")).render(
   <StrictMode>
     <Provider store={store}>
       <PayPalScriptProvider deferLoading={true}>
+        <ToastContainer position="top-right" autoClose={3000} theme="colored" />
         <RouterProvider router={router} />
       </PayPalScriptProvider>
     </Provider>

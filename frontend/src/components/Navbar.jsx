@@ -14,6 +14,8 @@ import {
   Package,
   UserCircle,
 } from "lucide-react";
+import { resetCart } from "../slices/cartSlice";
+import { toast } from "react-toastify";
 
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -30,9 +32,11 @@ export default function Navbar() {
     try {
       await logout().unwrap();
       dispatch(removeCredentials());
+      dispatch(resetCart());
       navigate("/");
+      toast.success("Logged out successfully");
     } catch (error) {
-      console.log(error?.data?.message || error.message);
+      toast.error(error?.data?.message || error.message);
     }
   };
 

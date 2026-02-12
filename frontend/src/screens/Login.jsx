@@ -6,6 +6,7 @@ import { setCredentials } from "../slices/authSlice";
 import { useLoginMutation } from "../slices/userApiSlice";
 import { Link } from "react-router-dom";
 import { useEffect } from "react";
+import { toast } from "react-toastify";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -25,8 +26,11 @@ function Login() {
       const res = await login({ email, password }).unwrap();
       dispatch(setCredentials({ ...res }));
       navigate(redirect);
+      toast.success("Login successful!");
     } catch (error) {
-      console.error(error);
+      toast.error(
+        error?.data?.message || "Login failed. Please check your credentials.",
+      );
     }
   };
   useEffect(() => {
