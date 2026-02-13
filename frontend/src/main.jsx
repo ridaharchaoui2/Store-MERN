@@ -49,6 +49,18 @@ const router = createBrowserRouter([
         element: <Store />,
       },
       {
+        path: "/search/:keyword",
+        element: <Store />,
+      },
+      {
+        path: "/store/page/:pageNumber",
+        element: <Store />,
+      },
+      {
+        path: "/search/:keyword/page/:pageNumber",
+        element: <Store />,
+      },
+      {
         path: "/login",
         element: <Login />,
       },

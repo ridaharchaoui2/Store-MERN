@@ -4,11 +4,12 @@ import { PRODUCT_URL, UPLOAD_URL } from "../constants";
 const productSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getProducts: builder.query({
-      query: () => ({
+      query: ({ pageNumber, keyword }) => ({
         url: PRODUCT_URL,
-        method: "GET",
+        params: { pageNumber, keyword },
       }),
       providesTags: ["Products"],
+      keepUnusedDataFor: 5,
     }),
     getProductsForHome: builder.query({
       query: () => ({

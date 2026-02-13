@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Grid from "./../components/Grid";
 import { useGetProductsQuery } from "./../slices/productSlice";
+import Pagination from "./../components/Pagination";
 
 function Store() {
   const { pageNumber, keyword: urlKeyword } = useParams();
@@ -184,6 +185,14 @@ function Store() {
               </button>
             </div>
           )}
+
+          <div className="mt-auto">
+            <Pagination
+              pages={data.pages}
+              page={data.page}
+              keyword={urlKeyword ? urlKeyword : ""}
+            />
+          </div>
         </main>
       </div>
     </div>
